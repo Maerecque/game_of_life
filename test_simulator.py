@@ -1,5 +1,6 @@
 from unittest import TestCase
 from Simulator import *
+import numpy as np
 
 
 class TestSimulator(TestCase):
@@ -13,6 +14,20 @@ class TestSimulator(TestCase):
         """
         Tests that the update functions returns an object of World type.
         """
+
+        world = self.sim.world
+
+        midx = world.width // 2
+        midy = world.height // 2
+
+        world.set(midx, midy, 1)
+        world.set(midx + 1, midy - 1, 1)
+        world.set(midx - 1, midy, 1)
+        world.set(midx + 1, midy, 1)
+        world.set(midx - 1, midy + 1, 1)
+
+        number_of_cells = np.sum(self.sim.update().world)
+        self.assertEqual(number_of_cells, 4)
         self.assertIsInstance(self.sim.update(), World)
 
     def test_get_generation(self):
