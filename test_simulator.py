@@ -14,20 +14,27 @@ class TestSimulator(TestCase):
         """
         Tests that the update functions returns an object of World type.
         """
+        """ Check with less than two neighbours """
+        sim1 = Simulator()
+        w1 = sim1.world
 
-        world = self.sim.world
+        ## Center cell
+        w1.set(w1.width // 2, w1.height // 2, 1)
 
-        midx = world.width // 2
-        midy = world.height // 2
+        self.assertEqual(np.sum(sim1.update().world), 0)
 
-        world.set(midx, midy, 1)
-        world.set(midx + 1, midy - 1, 1)
-        world.set(midx - 1, midy, 1)
-        world.set(midx + 1, midy, 1)
-        world.set(midx - 1, midy + 1, 1)
+        """ Check with more than three neighbours """
+        sim2 = Simulator()
+        w2 = sim2.world
 
-        number_of_cells = np.sum(self.sim.update().world)
-        self.assertEqual(number_of_cells, 4)
+        ## Set all cells to alive
+        for y in range(0, w2.height):
+            for x in range(0, w2.width):
+                w2.set(x, y, 1)
+
+        self.assertLess(np.sum(sim2.update().world), 4)
+
+        """ Assert that the returned value is of type World """
         self.assertIsInstance(self.sim.update(), World)
 
     def test_get_generation(self):

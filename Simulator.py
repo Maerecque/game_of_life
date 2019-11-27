@@ -34,10 +34,13 @@ class Simulator:
                 cell_alive = self.world.get(x,y)
                 neighbours = sum(self.world.get_neighbours(x,y))
 
-                if (cell_alive and neighbours > 3):
-                    next_generation.set(x,y,0)
+                if (cell_alive and (neighbours > 3 or neighbours < 2)):
+                    next_generation.set(x, y, 0)
                 else:
-                    next_generation.set(x,y,cell_alive)
+                    next_generation.set(x, y, cell_alive)
+
+                if (not cell_alive and neighbours == 3):
+                    next_generation.set(x, y, 1)
 
         self.set_world(next_generation)
 
