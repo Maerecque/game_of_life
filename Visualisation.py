@@ -65,7 +65,7 @@ class Visualisation:
             if self.editable:
                 self.clock.tick(10) # 10 fps when editing (for responsiveness)
             else:
-                self.clock.tick(2) # 2 fps otherwise (to slow down simulation)
+                self.clock.tick(30) # 2 fps otherwise (to slow down simulation) I don't need to have 2 fps, 2 fps is for Crisis 2013 not for GoL
 
     def __handle_events__(self) -> None:
         """

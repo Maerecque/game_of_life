@@ -28,18 +28,21 @@ class Simulator:
         self.generation += 1
         next_generation = World(self.world.width, self.world.height)
 
+        birth = [3,6]
+        survival = [2,3]
+
         #TODO: Do something to evolve the generation
         for y in range(0, self.world.height):
             for x in range(0, self.world.width):
                 cell_alive = self.world.get(x,y)
                 neighbours = sum(self.world.get_neighbours(x,y))
 
-                if (cell_alive and (neighbours > 3 or neighbours < 2)):
+                if (cell_alive and not neighbours in survival):
                     next_generation.set(x, y, 0)
                 else:
                     next_generation.set(x, y, cell_alive)
 
-                if (not cell_alive and neighbours == 3):
+                if (not cell_alive and neighbours in birth):
                     next_generation.set(x, y, 1)
 
         self.set_world(next_generation)
