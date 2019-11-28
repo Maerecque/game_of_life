@@ -1,5 +1,4 @@
 from World import *
-import numpy as np
 
 class Simulator:
     """
@@ -7,13 +6,18 @@ class Simulator:
     Read https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life for an introduction to Conway's Game of Life.
     """
 
-    def __init__(self, world = None):
+    def __init__(self, world = None, age = 1, survival = [2,3], birth = [3, 6]):
         """
         Constructor for Game of Life simulator.
 
         :param world: (optional) environment used to simulate Game of Life.
+        :param age: (optional) Max age of cell.
         """
         self.generation = 0
+        self.age = age
+        self.birth = birth
+        self.survival = survival
+
         if world == None:
             self.world = World(20)
         else:
@@ -25,25 +29,40 @@ class Simulator:
 
         :return: New state of the world.
         """
-        self.generation += 1
-        next_generation = World(self.world.width, self.world.height)
 
-        birth = [3,6]
-        survival = [2,3]
+        self.generation += 1
+
+        #Build next generation
+        next_generation = World(self.world.width, self.world.height)
+        birth_condition = set(range(2, self.age - 1))
+        # Leftside is B3/S23 rule right side is custom rule system
+        birth = [3] if self.age == 1 else self.birth # Amount of neighbours for birth
+        survival = [2,3] if self.age == 1 else self.survival # Amount of neighbours for survival of a cell
 
         #TODO: Do something to evolve the generation
         for y in range(0, self.world.height):
             for x in range(0, self.world.width):
-                cell_alive = self.world.get(x,y)
-                neighbours = sum(self.world.get_neighbours(x,y))
+                cell_age = self.world.get(x, y)
+                neighbours = self.world.get_neighbours(x, y)
+                neighbours_count = len([n for n in neighbours if n > 0])
 
-                if (cell_alive and not neighbours in survival):
-                    next_generation.set(x, y, 0)
+                # Rules for decreasing the age of a cell or preserving a cell
+                if (cell_age != 0 and not neighbours_count in survival):
+                    next_generation.set(x, y, cell_age - 1)
                 else:
-                    next_generation.set(x, y, cell_alive)
+                    next_generation.set(x, y, cell_age)
 
-                if (not cell_alive and neighbours in birth):
-                    next_generation.set(x, y, 1)
+                correct_birth_condition = list(set(neighbours) & birth_condition)
+
+                # Rules for creating a cell
+                if (not cell_age and neighbours_count in birth):
+                    if (self.age > 1 and len(correct_birth_condition) > 0):
+                        # Playing on custom rules
+                        next_generation.set(x, y, self.age)
+                    else:
+                        # Playing on B3/S23 rules
+                        next_generation.set(x, y, 1)
+
 
         self.set_world(next_generation)
 
