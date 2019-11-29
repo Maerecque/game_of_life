@@ -59,7 +59,8 @@ class Simulator:
                     if (self.age > 1 and len(correct_birth_condition) > 0):
                         # Playing on custom rules
                         next_generation.set(x, y, self.age)
-                    else:
+                    
+                    if (self.age == 1):
                         # Playing on B3/S23 rules
                         next_generation.set(x, y, 1)
 
